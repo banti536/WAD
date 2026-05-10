@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>User Data</title>
+</head>
+
+<body>
+
+    <h2>User Data</h2>
+
+    <div id="result"></div>
+
+    <script>
+
+        // Get Data from localStorage
+        let data = localStorage.getItem("userData");
+
+        // Convert JSON string to Object
+        let user = JSON.parse(data);
+
+        // Show Data on Page
+        document.getElementById("result").innerHTML = `
+            <h3>Name: ${user.name}</h3>
+            <h3>Email: ${user.email}</h3>
+            <h3>Password: ${user.password}</h3>
+        `;
+
+    </script>
+
+</body>
+
+</html>
