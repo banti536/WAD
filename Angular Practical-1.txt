@@ -1,0 +1,273 @@
+📘 AIM
+
+Create an Angular application to perform:
+
+User Registration
+User Login
+Display User Profile
+📅 DATE
+
+15-06-17
+
+⚙️ STEP-BY-STEP PROCEDURE
+🔹 Step 1: Install Requirements
+Install Node.js (LTS version)
+node -v
+npm -v
+Install Angular CLI:
+npm install -g @angular/cli
+ng version
+🔹 Step 2: Create Project
+ng new user-auth-app
+cd user-auth-app
+ng serve
+
+Open:
+
+http://localhost:4200
+🔹 Step 3: Create Components
+ng generate component register
+ng generate component login
+ng generate component profile
+🔹 Step 4: Create Service (Service is used to store and share data ) 
+ng generate service user
+💻 IMPLEMENTATION (COPY-PASTE CODE)
+🔹 1. Routing File
+
+📂 src/app/app.routes.ts
+
+import { Routes } from '@angular/router';  👉 This imports routing feature from Angular
+👉 Routes is used to define navigation paths 
+
+import { RegisterComponent } from './register/register';
+import { LoginComponent } from './login/login';
+import { ProfileComponent } from './profile/profile';
+
+👉 This creates an array of routes
+👉 Each route defines:
+URL path
+Component to display
+
+export const routes: Routes = [
+  { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'profile', component: ProfileComponent },
+  { path: '', redirectTo: 'register', pathMatch: 'full' }
+];
+
+🔹 2. App Config
+
+📂 src/app/app.config.ts
+
+import { provideRouter } from '@angular/router'; //“provideRouter is used to activate routing in Angular application.”
+import { routes } from './app.routes';
+
+export const appConfig = {   //👉 This creates a configuration object for the application
+  providers: [            //“Providers array are used to configure services and features at application level.”        
+    provideRouter(routes)  //👉 Without this → routing will NOT work
+  ]
+};
+🔹 3. App HTML (Navigation)
+
+📂 src/app/app.html
+
+<a routerLink="/register">Register</a> |
+<a routerLink="/login">Login</a> |
+<a routerLink="/profile">Profile</a>
+
+<hr>
+
+<router-outlet></router-outlet>  👉 Placeholder where component will load
+
+🔹 4. User Service
+
+📂 src/app/user.service.ts
+
+import { Injectable } from '@angular/core';  //“Injectable is used to create a service that can be used across components.”
+
+@Injectable({           //“providedIn: root makes the service available throughout the application.”
+  providedIn: 'root'     //@Injectable Decorator
+})
+export class UserService {  👉 Defines the service class
+
+  userData: any;   //“This variable stores user data temporarily.” 
+
+  register(user: any) {   //“This method stores user data received from the register component.”
+    this.userData = user;
+  }
+
+  getUser() {
+    return this.userData;   /“This method returns stored user data to other components.”
+  }
+}
+🔹 5. Register Component
+
+📂 register.ts
+
+import { Component } from '@angular/core'; //“Component is used to create UI part of Angular application.”
+import { FormsModule } from '@angular/forms'; //“FormsModule is used for two-way data binding.”
+import { UserService } from '../user.service'; //👉 To store user data
+import { Router } from '@angular/router'; //👉 Used for navigation (page change)
+
+@Component({                        👉 Defines component settings:  
+  selector: 'app-register',           selector → HTML tag name ,
+  standalone: true,                  standalone: true → no module needed , 
+  imports: [FormsModule],         //imports → use FormsModule
+  templateUrl: './register.html'    templateUrl → HTML file
+})
+export class RegisterComponent {         //👉 Main logic of component
+
+  user = { name: '', email: '', password: '' };     👉 Stores input values
+
+  constructor(private userService: UserService, private router: Router) {}   //👉 Injects:
+                                                                  //UserService → for storing data ,  //Router → for navigation
+  register() {
+    this.userService.register(this.user);   
+    alert("Registration Successful");
+    this.router.navigate(['/login']);     
+  }
+}
+
+📂 register.html
+
+<h2>Register</h2>
+
+<input type="text" placeholder="Name" [(ngModel)]="user.name"><br>
+<input type="email" placeholder="Email" [(ngModel)]="user.email"><br>
+<input type="password" placeholder="Password" [(ngModel)]="user.password"><br>      //“ngModel provides two-way data binding.”
+
+<button (click)="register()">Register</button>     👉 Calls register function
+🔹 6. Login Component
+
+📂 login.ts
+
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { UserService } from '../user.service';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [FormsModule],
+  templateUrl: './login.html'
+})
+export class LoginComponent {
+
+  email = '';
+  password = '';
+
+  constructor(private userService: UserService, private router: Router) {}
+
+  login() {
+    const user = this.userService.getUser();
+
+    if (user && user.email === this.email && user.password === this.password) {
+      alert("Login Successful");
+      this.router.navigate(['/profile']);
+    } else {
+      alert("Invalid Credentials");
+    }
+  }
+}
+
+📂 login.html
+
+<h2>Login</h2>
+
+<input type="email" placeholder="Email" [(ngModel)]="email"><br>
+<input type="password" placeholder="Password" [(ngModel)]="password"><br>
+
+<button (click)="login()">Login</button>
+🔹 7. Profile Component
+
+📂 profile.ts
+
+import { Component } from '@angular/core';
+import { UserService } from '../user.service';
+
+@Component({
+  selector: 'app-profile',
+  standalone: true,
+  templateUrl: './profile.html'
+})
+export class ProfileComponent {
+
+  user: any;
+
+  constructor(private userService: UserService) {
+    this.user = this.userService.getUser();
+  }
+}
+
+📂 profile.html
+
+<h2>User Profile</h2>
+
+<p>Name: {{user?.name}}</p>
+<p>Email: {{user?.email}}</p>
+🧪 OUTPUT
+User registers successfully
+User logs in with credentials
+User profile is displayed
+📌 CONCLUSION
+
+Successfully created Angular application for user registration, login, and profile display using components, routing, and services.
+
+🎤 VIVA QUESTIONS (VERY IMPORTANT)
+Q1: What is Angular Service?
+
+👉 Used to share data between components
+
+Q2: What is Routing?
+
+👉 Navigation between components
+
+Q3: What is ngModel?
+
+👉 Two-way data binding
+
+Q4: Why no app.module.ts?
+
+👉 Because standalone Angular is used.
+
+📖 Theory
+
+Angular is a frontend framework used to build web applications.
+It uses:
+
+Components → UI parts
+Routing → Navigation between pages
+Services → Share data between components
+⚙️ Steps
+Install Angular CLI
+Create project using ng new
+Create components: register, login, profile
+Create service to store user data
+Setup routing
+Use FormsModule for input binding
+Implement register, login, profile logic
+💻 Code Logic (Short)
+Register
+Take user input (name, email, password)
+Store data in service
+Redirect to login
+Login
+Check email & password
+If correct → go to profile
+Else → show error
+Profile
+Display user data from service
+📂 Files Used
+register.ts → Registration logic
+login.ts → Login logic
+profile.ts → Display data
+user.service.ts → Store data
+app.routes.ts → Routing
+🧪 Output
+User can register
+User can login
+User data displayed on profile
+📌 Conclusion
+
+Successfully implemented user authentication system using Angular with components, routing, and services.
